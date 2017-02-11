@@ -24,7 +24,7 @@ This little script provides the following functionality:
 
 ## Before use -  Get OAuth client ID
 
-Go to [google console credentials](https://console.developers.google.com/apis/credentials) to create a [OAuth 2.0](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490) client ID (select web application works well). Don't forget to set URI as http://localhost:8080/ (to make redirection goes smoothly). Download the JSON file and save it as client_secret.json at `bloggercmd/`
+Go to [google console credentials](https://console.developers.google.com/apis/credentials) to create a [OAuth 2.0](https://support.google.com/cloud/answer/6158849?hl=en&ref_topic=6262490) client ID (select web application works well). Don't forget to set URI as http://localhost:8080/ (to make redirection goes smoothly). Download the JSON file and save it as `bloggercmd/client_secret.json`
 
 ## References
 
