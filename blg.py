@@ -79,7 +79,7 @@ class BlgService(object):
 
 		drafts_info = self.service.posts().list(blogId=self.blogId, status=status, maxResults=MAX_RESULTS()).execute()
 		if len(drafts_info['items']) > 1 and draft_num < 0:
-			print('Please specify your postId for [' + status_txt + '], becasue you have multiple drafts')
+			print('Please specify your postId for [' + status_txt + '], becasue you have multiple [' + status_txt + ']')
 			for i in range(len(drafts_info['items'])):
 				print(i, ':', drafts_info['items'][i]['title'])
 			os._exit(1)
@@ -249,19 +249,21 @@ class Blg(object):
 		parser.add_argument('--blog_idx', type=int, default=-1)
 		parser.add_argument('--post_idx', help='The post you want to revert', type=int, default=-1)
 		args = parser.parse_args(sys.argv[2:])
-		print('Running blg update, blog_idx=%s, post_idx=%s, infile=%s, title=%s, tag=%s' % (args.blog_idx, args.published_idx, args.infile, args.title, args.tag))
+		print('Running blg update, blog_idx=%s, post_idx=%s, infile=%s, title=%s, tag=%s' % (args.blog_idx, args.post_idx, args.infile, args.title, args.tag))
 
+		service_object = BlgService()
 		service_object.set_blog_id(args.blog_idx)
 		postId = service_object.set_post_id(args.post_idx, None)
 		post_idx = max(args.post_idx, 0)
-		post_list = service_object.service.posts().list(blogId=blogId, maxResults=post_idx + 1).execute()
+		post_list = service_object.service.posts().list(blogId=service_object.blogId, maxResults=post_idx + 1).execute()
 		this_post = post_list['items'][post_idx]
 		
 		if args.infile:
 			try:
-				content = open(infile, 'r')
+				content = open(args.infile, 'r')
+				content = content.read()
 			except FileNotFoundError:
-				print(infile + ' does not exist! Please try again.')
+				print(args.infile + ' does not exist! Please try again.')
 				os._exit(1)
 		else:
 			content = this_post['content']
@@ -277,7 +279,7 @@ class Blg(object):
 			title = this_post['title']
 
 		body = {'content': content, 'title': title, 'labels': labels}
-		post = service_object.service.posts().update(blogId=service_object.blogId, body=body, isDraft=True).execute()
+		post = service_object.service.posts().update(blogId=service_object.blogId, postId=postId, body=body).execute()
 		print('The file: ' + post['title'])
 		print('is posted as draft at: ' + post['url'])
 		print('To make your latest draft publish, try blg publish')
